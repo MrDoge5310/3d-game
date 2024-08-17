@@ -2,11 +2,9 @@ class Mapmanager:
     def __init__(self):
         self.model = 'block.egg'
         self.texture = 'block.png'
-        self.color = (0.2, 0.2, 0.35, 1)
+        self.color = (0.2, 0.2, 0.4, 1)
         self.land = None
         self.startNew()
-        self.addBlock((0, 0, 0))
-        self.addBlock((0, 1, 0))
 
     def startNew(self):
         self.land = render.attachNewNode("Land")
@@ -17,3 +15,20 @@ class Mapmanager:
         block.setPos(position)
         block.setColor(self.color)
         block.reparentTo(self.land)
+
+    def loadLend(self, filename):
+        with open(filename, 'r') as file:
+            y = 0
+            for line in file:
+                x = 0
+                line = line.split(' ')
+                for z in line:
+                    for z0 in range(int(z) + 1):
+                        if z0 > 0:
+                            self.color = (1, 0, 0, 1)
+                        else:
+                            self.color = (0.2, 0.2, 0.4, 1)
+                        self.addBlock((x, y, z0))
+                    x += 1
+                y += 1
+
