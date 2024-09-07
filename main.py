@@ -8,8 +8,8 @@ class Game(ShowBase):
         ShowBase.__init__(self)
         self.land = Mapmanager()
         base.camLens.setFov(90)
-        self.land.loadLend('land.txt')
-        self.hero = Hero((5, 10, 5), self.land)
+        x,y = self.land.loadLend('land.txt')
+        self.hero = Hero((x // 2, y // 2, 3), self.land)
 
 
 game = Game()

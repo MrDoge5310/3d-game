@@ -14,8 +14,7 @@ class Hero:
         base.disableMouse()
         base.camera.setH(180)
         base.camera.reparentTo(self.model)
-        # pos = self.model.getPos()
-        # base.camera.setPos(-pos[0], -pos[1], -pos[2])
+        base.camera.setPos(-0, 0, 1)
         self.cameraOn = True
 
     def cameraUp(self):
@@ -35,6 +34,15 @@ class Hero:
 
         base.accept('w', self.forward)
         base.accept('w' + '-repeat', self.forward)
+
+        base.accept('s', self.backward)
+        base.accept('s' + '-repeat', self.backward)
+
+        base.accept('a', self.left)
+        base.accept('a' + '-repeat', self.left)
+
+        base.accept('d', self.right)
+        base.accept('d' + '-repeat', self.right)
 
     def turn_right(self):
         a = self.model.getH()
@@ -75,7 +83,20 @@ class Hero:
         self.model.setPos(pos)
 
     def forward(self):
-        self.just_move(self.model.getH())
+        angle = (self.model.getH()) % 360
+        self.try_move(angle)
+
+    def backward(self):
+        angle = (self.model.getH() + 180) % 360
+        self.try_move(angle)
+
+    def left(self):
+        angle = (self.model.getH() + 90) % 360
+        self.try_move(angle)
+
+    def right(self):
+        angle = (self.model.getH() - 90) % 360
+        self.try_move(angle)
 
     def turn_left(self):
         a = self.model.getH()
@@ -87,3 +108,13 @@ class Hero:
             self.cameraUp()
         else:
             self.cameraBind()
+
+    def try_move(self, angle):
+        pos = self.look_at(angle)
+        if self.land.isEmpty(pos):
+            pos = self.land.findHighestEmpty(pos)
+            self.model.setPos(pos)
+        else:
+            pos = pos[0], pos[1], pos[2] + 1
+            if self.land.isEmpty(pos):
+                self.model.setPos(pos)
