@@ -14,8 +14,8 @@ class Hero:
         base.disableMouse()
         base.camera.setH(180)
         base.camera.reparentTo(self.model)
-        pos = self.model.getPos()
-        base.camera.setPos(-pos[0], -pos[1], -pos[2])
+        # pos = self.model.getPos()
+        # base.camera.setPos(-pos[0], -pos[1], -pos[2])
         self.cameraOn = True
 
     def cameraUp(self):
@@ -27,6 +27,60 @@ class Hero:
 
     def accept_events(self):
         base.accept('c', self.change_view)
+        base.accept('arrow_left', self.turn_left)
+        base.accept('arrow_left'+'-repeat', self.turn_left)
+
+        base.accept('arrow_right', self.turn_right)
+        base.accept('arrow_right'+'-repeat', self.turn_right)
+
+        base.accept('w', self.forward)
+        base.accept('w' + '-repeat', self.forward)
+
+    def turn_right(self):
+        a = self.model.getH()
+        a -= 5
+        self.model.setH(a % 360)
+
+    def check_dir(self, angle):
+        if 0 <= angle <= 20:
+            return 0, -1
+        elif 20 < angle <= 65:
+            return 1, -1
+        elif 65 < angle <= 110:
+            return 1, 0
+        elif 110 < angle <= 155:
+            return 1, 1
+        elif 155 < angle <= 200:
+            return 0, 1
+        elif 200 < angle <= 245:
+            return -1, 1
+        elif 245 < angle <= 290:
+            return -1, 0
+        elif 290 < angle <= 335:
+            return -1, -1
+        else:
+            return 0, -1
+
+    def look_at(self, angle):
+        from_x = round(self.model.getX())
+        from_y = round(self.model.getY())
+        from_z = round(self.model.getZ())
+
+        dx, dy = self.check_dir(angle)
+
+        return from_x + dx, from_y + dy, from_z
+
+    def just_move(self, angle):
+        pos = self.look_at(angle)
+        self.model.setPos(pos)
+
+    def forward(self):
+        self.just_move(self.model.getH())
+
+    def turn_left(self):
+        a = self.model.getH()
+        a += 5
+        self.model.setH(a % 360)
 
     def change_view(self):
         if self.cameraOn:
